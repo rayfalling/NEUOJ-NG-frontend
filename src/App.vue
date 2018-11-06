@@ -1,25 +1,101 @@
 <template>
-  <div id="app">
-    <div id="nav">
-      <router-link to="/">Home</router-link> |
-      <router-link to="/about">About</router-link>
-    </div>
-    <router-view/>
-  </div>
-</template>
-<style lang="stylus">
-#app
-  font-family 'Avenir', Helvetica, Arial, sans-serif
-  -webkit-font-smoothing antialiased
-  -moz-osx-font-smoothing grayscale
-  text-align center
-  color #2c3e50
+  <v-app :dark="nightly" :light="!nightly">
+    <v-toolbar app>
+      <v-toolbar-title class="headline text-uppercase">
+        <span>NEUOJ</span>
+        <span class="font-weight-light"> NG</span>
+      </v-toolbar-title>
+      <v-spacer></v-spacer>
+      <v-toolbar-items class="hidden-sm-and-down">
+        <v-btn flat to="/">Home</v-btn>
+        <v-btn flat to="/problem">Problem</v-btn>
+        <v-btn flat to="/status">Status</v-btn>
+        <v-btn flat to="/contest">Contest</v-btn>
+        <v-btn flat to="/training">Training</v-btn>
+        <v-btn flat to="/discuss">Discuss</v-btn>
+        <v-btn flat to="/rating">Rating</v-btn>
+      </v-toolbar-items>
+      <v-spacer></v-spacer>
+      <v-toolbar-items class="hidden-sm-and-down">
+        <v-btn flat to="/login">Sign in</v-btn>
+        <v-btn flat to="/join">Sign up</v-btn>
+      </v-toolbar-items>
+    </v-toolbar>
 
-#nav
-  padding 30px
-  a
-    font-weight bold
-    color #2c3e50
-    &.router-link-exact-active
-      color #42b983
+    <v-content>
+      <v-navigation-drawer
+          v-model="drawer"
+          :mini-variant="mini"
+          permanent
+          :app="true"
+          :clipped="true"
+          class="elevation-4"
+      >
+        <v-list class="pa-1">
+          <v-list-tile v-if="mini" @click.stop="mini = !mini">
+            <v-list-tile-action>
+              <v-icon>chevron_right</v-icon>
+            </v-list-tile-action>
+          </v-list-tile>
+
+          <v-list-tile avatar tag="div" v-if="!mini">
+            <v-list-tile-action>
+              <v-icon>menu</v-icon>
+            </v-list-tile-action>
+
+            <v-list-tile-content>
+              <v-list-tile-title>Quick Navigation</v-list-tile-title>
+            </v-list-tile-content>
+
+            <v-list-tile-action>
+              <v-btn icon @click.stop="mini = !mini">
+                <v-icon>chevron_left</v-icon>
+              </v-btn>
+            </v-list-tile-action>
+          </v-list-tile>
+        </v-list>
+
+        <v-list class="pt-0" dense>
+          <v-divider light></v-divider>
+
+          <v-subheader>
+            Tool Box
+          </v-subheader>
+
+          <v-list-tile
+              @click="toggleLight"
+          >
+            <v-list-tile-action>
+              <v-icon>{{ nightly ? 'brightness_1' : 'brightness_3' }}</v-icon>
+            </v-list-tile-action>
+
+            <v-list-tile-content>
+              <v-list-tile-title>{{ nightly ? 'Day Mode' : 'Night Mode' }}</v-list-tile-title>
+            </v-list-tile-content>
+          </v-list-tile>
+        </v-list>
+      </v-navigation-drawer>
+      <router-view></router-view>
+    </v-content>
+  </v-app>
+</template>
+
+<script lang="ts">
+import { Component, Vue } from 'vue-property-decorator';
+
+@Component
+export default class Home extends Vue {
+  private nightly = true;
+  private readonly drawer = true;
+  private mini = false;
+
+  private toggleLight() {
+    this.nightly = !this.nightly;
+  }
+}
+</script>
+
+<style lang="stylus">
+.v-navigation-drawer
+  z-index 0
 </style>
