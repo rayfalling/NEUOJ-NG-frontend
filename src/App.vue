@@ -109,7 +109,7 @@ export default class Home extends Vue {
 <style lang="stylus">
 html
   min-width 1350px
-  overflow-x auto !important
+  overflow auto !important
 </style>
 
 <style lang="stylus" scoped>
