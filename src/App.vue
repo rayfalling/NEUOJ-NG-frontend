@@ -3,6 +3,7 @@
     <v-toolbar app
                :height="50"
                clipped-left
+               class="accent"
     >
       <v-toolbar-title class="headline text-uppercase">
         <span>NEUOJ</span>
@@ -128,6 +129,14 @@ export default class Home extends Vue {
 html
   min-width 1350px
   overflow auto !important
+.accent
+  &.theme--dark {
+    background-color: #212121 !important;
+    color: #fff !important;
+  }
+  color white !important
+  *
+    color white !important
 </style>
 
 <style lang="stylus" scoped>

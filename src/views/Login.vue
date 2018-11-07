@@ -3,23 +3,27 @@
     <v-layout align-center justify-center>
       <v-flex xs12 sm8 md4>
         <v-card class="elevation-12">
-          <v-toolbar dark color="primary">
+          <v-toolbar class="accent">
             <v-toolbar-title>Sign in / Sign up</v-toolbar-title>
           </v-toolbar>
           <v-card-text>
             <v-form>
-              <v-text-field @keyup="onTextChange" @change="onTextChange"
-                            v-model="username"
+              <v-text-field v-model="username"
+                            required
                             prepend-icon="person" name="username" label="Username" type="text">
               </v-text-field>
               <v-text-field v-model="password"
-                            @keypress="onPasswordChange" @keypress.enter="submit"
+                            required
+                            @keypress.enter="submit"
                             id="password" prepend-icon="lock" name="password" label="Password" type="password">
               </v-text-field>
             </v-form>
           </v-card-text>
-          <v-card-actions>
-            <p class="font-weight-bold" v-if="markCreate">
+          <v-card-actions v-if="username">
+            <p class="font-weight-bold" v-if="queryingUsername">
+              Please wait while checking username.
+            </p>
+            <p class="font-weight-bold" v-else-if="markCreate">
               It appears this username has not been taken. <br/>
               Shall we register a new membership with the given credentials?
             </p>
@@ -38,15 +42,17 @@
             >
             </p>
             <v-spacer></v-spacer>
-            <v-btn @click="reset" color="error" v-if="markReset">
-              Reset
-            </v-btn>
-            <v-btn @click="createAccount" color="primary" v-else-if="markCreate">
-              Register
-            </v-btn>
-            <v-btn @click="login" v-else-if="markLogin">
-              Login
-            </v-btn>
+            <template v-if="!queryingUsername">
+              <v-btn @click="reset" color="error" v-if="markReset">
+                Reset
+              </v-btn>
+              <v-btn @click="createAccount" color="primary" v-else-if="markCreate">
+                Register
+              </v-btn>
+              <v-btn @click="login" color="primary" v-else-if="markLogin">
+                Login
+              </v-btn>
+            </template>
           </v-card-actions>
         </v-card>
       </v-flex>
@@ -55,7 +61,7 @@
 </template>
 
 <script lang="ts">
-import { Component, Vue } from 'vue-property-decorator';
+import { Component, Vue, Watch } from 'vue-property-decorator';
 
 @Component
 export default class Login extends Vue {
@@ -67,22 +73,47 @@ export default class Login extends Vue {
   private username = '';
   private password = '';
 
-  private onTextChange() {
-    console.log(this.username);
-    if (Math.floor(Math.random() * 100 % 2)) {
-      this.markLogin = true;
-      this.markCreate = false;
-    } else {
-      this.markLogin = false;
-      this.markCreate = true;
-    }
+  @Watch('username')
+  private onUsernameChanged() {
+    clearTimeout(this.requestTimer);
+    if (this.abortController) this.abortController.abort();
+    this.markCreate = false;
+    this.markLogin = false;
+    this.markReset = false;
+    if (this.username) this.requestTimer = window.setTimeout(this.queryUsername, 500);
+  }
+
+  @Watch('password')
+  private onPasswordChanged() {
     this.markReset = false;
     this.justReset = false;
   }
 
-  private onPasswordChange() {
-    this.markReset = false;
-    this.justReset = false;
+  private queryingUsername = false;
+  private requestTimer = 0;
+  private abortController: AbortController = null;
+
+  private queryUsername() {
+    this.queryingUsername = true;
+    this.abortController = new AbortController();
+    new Promise((resolve, reject) => {
+      const t = setTimeout(resolve, 2000);
+      this.abortController.signal.addEventListener('abort', () => {
+        clearTimeout(t);
+        reject(new DOMException('Aborted', 'AbortError'));
+      });
+    }).then(() => {
+      if (Math.floor(Math.random() * 100 % 2)) {
+        this.markLogin = true;
+        this.markCreate = false;
+      } else {
+        this.markLogin = false;
+        this.markCreate = true;
+      }
+      this.markReset = false;
+      this.justReset = false;
+      this.queryingUsername = false;
+    });
   }
 
   private createAccount() {
