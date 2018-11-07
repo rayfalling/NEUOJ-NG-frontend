@@ -1,12 +1,15 @@
 <template>
   <v-app :dark="nightly" :light="!nightly">
-    <v-toolbar app>
+    <v-toolbar app
+               :height="50"
+               clipped-left
+    >
       <v-toolbar-title class="headline text-uppercase">
         <span>NEUOJ</span>
         <span class="font-weight-light"> NG</span>
       </v-toolbar-title>
       <v-spacer></v-spacer>
-      <v-toolbar-items class="hidden-sm-and-down">
+      <v-toolbar-items>
         <v-btn flat to="/">Home</v-btn>
         <v-btn flat to="/problem">Problem</v-btn>
         <v-btn flat to="/status">Status</v-btn>
@@ -16,7 +19,7 @@
         <v-btn flat to="/rating">Rating</v-btn>
       </v-toolbar-items>
       <v-spacer></v-spacer>
-      <v-toolbar-items class="hidden-sm-and-down">
+      <v-toolbar-items>
         <v-btn flat to="/login">Sign in</v-btn>
         <v-btn flat to="/join">Sign up</v-btn>
       </v-toolbar-items>
@@ -27,9 +30,10 @@
           v-model="drawer"
           :mini-variant="mini"
           permanent
-          :app="true"
-          :clipped="true"
+          clipped
+          app
           class="elevation-4"
+          :width="260"
       >
         <v-list class="pa-1">
           <v-list-tile v-if="mini" @click.stop="mini = !mini">
@@ -85,9 +89,16 @@ import { Component, Vue } from 'vue-property-decorator';
 
 @Component
 export default class Home extends Vue {
-  private nightly = true;
+  private nightly = false;
   private readonly drawer = true;
   private mini = false;
+
+  public mounted() {
+    if (
+      document.documentElement &&
+      document.documentElement.clientWidth <= 1600
+    ) this.mini = true;
+  }
 
   private toggleLight() {
     this.nightly = !this.nightly;
@@ -96,6 +107,12 @@ export default class Home extends Vue {
 </script>
 
 <style lang="stylus">
+html
+  min-width 1350px
+  overflow-x auto !important
+</style>
+
+<style lang="stylus" scoped>
 .v-navigation-drawer
-  z-index 0
+  z-index 1
 </style>
