@@ -45,6 +45,7 @@
     </v-toolbar>
 
     <v-content>
+      <v-progress-linear v-if="resolving" :indeterminate="true"></v-progress-linear>
       <v-navigation-drawer
           v-model="drawer"
           :mini-variant="mini"
@@ -112,6 +113,20 @@ export default class Home extends Vue {
   private readonly drawer = true;
   private mini = false;
 
+  private resolving = false;
+  private title = 'NEUOJ';
+
+  public created() {
+    this.$router.beforeEach((to, from, next) => {
+      this.resolving = true;
+      next();
+    });
+    this.$router.afterEach((to, from) => {
+      document.title = to.name ? `${to.name} - ${this.title}` : this.title;
+      this.resolving = false;
+    });
+  }
+
   public mounted() {
     if (
       document.documentElement &&
@@ -129,6 +144,10 @@ export default class Home extends Vue {
 html
   min-width 1350px
   overflow auto !important
+.v-progress-linear
+  position absolute !important
+  top 0 !important
+  margin 0 !important
 .accent
   &.theme--dark {
     background-color: #212121 !important;

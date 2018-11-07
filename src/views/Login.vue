@@ -6,21 +6,29 @@
           <v-toolbar class="accent">
             <v-toolbar-title>Sign in / Sign up</v-toolbar-title>
           </v-toolbar>
+          <div class="relative">
+            <v-progress-linear v-if="submitting" :indeterminate="true"></v-progress-linear>
+          </div>
           <v-card-text>
-            <v-form>
+            <v-form ref="form">
               <v-text-field v-model="username"
                             required
+                            :rules="[v => !!v || 'Username is required!']"
                             prepend-icon="person" name="username" label="Username" type="text">
               </v-text-field>
               <v-text-field v-model="password"
                             required
+                            :rules="[v => !!v || 'Password is required!']"
                             @keypress.enter="submit"
                             id="password" prepend-icon="lock" name="password" label="Password" type="password">
               </v-text-field>
             </v-form>
           </v-card-text>
           <v-card-actions v-if="username">
-            <p class="font-weight-bold" v-if="queryingUsername">
+            <p class="font-weight-bold" v-if="submitting">
+              Please wait...
+            </p>
+            <p class="font-weight-bold" v-else-if="queryingUsername">
               Please wait while checking username.
             </p>
             <p class="font-weight-bold" v-else-if="markCreate">
@@ -43,13 +51,13 @@
             </p>
             <v-spacer></v-spacer>
             <template v-if="!queryingUsername">
-              <v-btn @click="reset" color="error" v-if="markReset">
+              <v-btn @click="reset" :disabled="submitting" color="error" v-if="markReset">
                 Reset
               </v-btn>
-              <v-btn @click="createAccount" color="primary" v-else-if="markCreate">
+              <v-btn @click="createAccount" :disabled="submitting" color="primary" v-else-if="markCreate">
                 Register
               </v-btn>
-              <v-btn @click="login" color="primary" v-else-if="markLogin">
+              <v-btn @click="login" :disabled="submitting" color="primary" v-else-if="markLogin">
                 Login
               </v-btn>
             </template>
@@ -72,6 +80,8 @@ export default class Login extends Vue {
 
   private username = '';
   private password = '';
+
+  private submitting = false;
 
   @Watch('username')
   private onUsernameChanged() {
@@ -117,17 +127,35 @@ export default class Login extends Vue {
   }
 
   private createAccount() {
-    this.$router.push('/join');
+    if ((this.$refs.form as any).validate()) {
+      this.submitting = true;
+      setTimeout(() => {
+        this.submitting = false;
+        this.$router.push('/join');
+      }, 1000);
+    }
   }
 
   private login() {
-    this.markReset = true;
+    if ((this.$refs.form as any).validate()) {
+      this.submitting = true;
+      setTimeout(() => {
+        this.markReset = true;
+        this.submitting = false;
+      }, 1000);
+    }
   }
 
   private reset() {
-    this.justReset = true;
-    this.markReset = false;
-    this.markLogin = true;
+    if ((this.$refs.form as any).validate()) {
+      this.submitting = true;
+      setTimeout(() => {
+        this.justReset = true;
+        this.markReset = false;
+        this.markLogin = true;
+        this.submitting = false;
+      }, 1000);
+    }
   }
 
   private submit() {
@@ -138,5 +166,6 @@ export default class Login extends Vue {
 </script>
 
 <style lang="stylus" scoped>
-
+.relative
+  position relative
 </style>

@@ -9,7 +9,7 @@ export default new Router({
   routes: [
     {
       path: '/',
-      name: 'home',
+      name: 'Home',
       // route level code-splitting
       // this generates a separate chunk (about.[hash].js) for this route
       // which is lazy-loaded when the route is visited.
@@ -17,17 +17,17 @@ export default new Router({
     },
     {
       path: '/login',
-      name: 'login',
+      name: 'Sign in / Sign up',
       component: () => import('./views/Login.vue'),
     },
     {
       path: '/join',
-      name: 'join',
+      name: 'Sign up',
       component: () => import('./views/Join.vue'),
     },
     {
       path: '/auth/ssologin', // for backward compatibility
-      name: 'sso',
+      name: 'Signing in',
       component: () => import('./views/SSO.vue'),
     },
   ],
