@@ -20,8 +20,26 @@
       </v-toolbar-items>
       <v-spacer></v-spacer>
       <v-toolbar-items>
-        <v-btn flat to="/login">Sign in</v-btn>
-        <v-btn flat to="/join">Sign up</v-btn>
+        <v-menu offset-y>
+          <v-btn
+              slot="activator"
+              flat
+          >
+            Sign in / Sign up
+          </v-btn>
+          <v-list>
+            <v-list-tile
+                href="https://sso.neu.cn/cas/login?service=http%3A%2F%2Foj.neu.edu.cn%2Fauth%2Fssologin"
+            >
+              <v-list-tile-title>with Campus ID</v-list-tile-title>
+            </v-list-tile>
+            <v-list-tile
+                to="/login"
+            >
+              <v-list-tile-title>with Username</v-list-tile-title>
+            </v-list-tile>
+          </v-list>
+        </v-menu>
       </v-toolbar-items>
     </v-toolbar>
 

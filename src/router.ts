@@ -15,5 +15,20 @@ export default new Router({
       // which is lazy-loaded when the route is visited.
       component: () => import('./views/Home.vue'),
     },
+    {
+      path: '/login',
+      name: 'login',
+      component: () => import('./views/Login.vue'),
+    },
+    {
+      path: '/join',
+      name: 'join',
+      component: () => import('./views/Join.vue'),
+    },
+    {
+      path: '/auth/ssologin', // for backward compatibility
+      name: 'sso',
+      component: () => import('./views/SSO.vue'),
+    },
   ],
 });
