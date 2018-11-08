@@ -130,7 +130,6 @@ export default class Login extends Vue {
     if ((this.$refs.form as any).validate()) {
       this.submitting = true;
       setTimeout(() => {
-        this.submitting = false;
         this.$router.push('/join');
       }, 1000);
     }

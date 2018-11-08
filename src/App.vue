@@ -107,6 +107,8 @@
 <script lang="ts">
 import { Component, Vue } from 'vue-property-decorator';
 
+import * as manifestJSON from '../public/manifest.json';
+
 @Component
 export default class Home extends Vue {
   private nightly = false;
@@ -136,6 +138,12 @@ export default class Home extends Vue {
 
   private toggleLight() {
     this.nightly = !this.nightly;
+    const metaThemeColor = document.querySelector('meta[name=theme-color]');
+    metaThemeColor.setAttribute(
+      'content', this.nightly
+        ? '#212121'
+        : (manifestJSON as any).theme_color
+    );
   }
 }
 </script>
